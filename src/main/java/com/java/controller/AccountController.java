@@ -12,13 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.java.bo.AccountBO;
+import com.java.bo.TaskBO;
 import com.java.dao.AccountDAO;
 import com.java.model.Account;
 
 @WebServlet("/accounts")
 public class AccountController extends HttpServlet{
 	private ArrayList<Account> listAccounts = new ArrayList<Account>();
-	private AccountDAO accountDAO = new AccountDAO();
+	private AccountBO accountBO = new AccountBO();
+	private TaskBO taskBO = new TaskBO();
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -32,7 +35,7 @@ public class AccountController extends HttpServlet{
 		System.out.println("action " + action);
 		//update account
 		if(accountId != null && !accountId.equals("") && action.equals("update")) {
-			Account account = accountDAO.getAccountById(Integer.parseInt(accountId));
+			Account account = accountBO.getAccountById(Integer.parseInt(accountId));
 			System.out.println("fullname " + account.getFullname());
 			String json = gson.toJson(account);
 			resp.setContentType("application/json");
@@ -44,10 +47,12 @@ public class AccountController extends HttpServlet{
 			out.close();
 		}else if(accountId != null && !accountId.equals("") && action.equals("delete")){
 			//delete 
-			accountDAO.deleteAccount(Integer.parseInt(accountId));
+			taskBO.deleteTaskByAccountId(Integer.parseInt(accountId));
+			accountBO.deleteAccount(Integer.parseInt(accountId));
+			System.out.println("Delete success");
 		}
 		
-		listAccounts = accountDAO.getAll();
+		listAccounts = accountBO.getAll();
 		System.out.println("fullname account " + listAccounts.get(0).getFullname());
 		System.out.println("Chào nè");
 		req.setAttribute("listAccounts", listAccounts);	
@@ -72,7 +77,7 @@ public class AccountController extends HttpServlet{
 			account.setAddress((String)req.getParameter("address"));
 			account.setPhone((String)req.getParameter("phone"));
 			
-			accountDAO.insertAccount(account);
+			accountBO.insertAccount(account);
 		} else {
 			Account account = new Account();
 			account.setAccountId(Integer.parseInt(accountId));
@@ -82,11 +87,11 @@ public class AccountController extends HttpServlet{
 			account.setAddress((String)req.getParameter("address"));
 			account.setPhone((String)req.getParameter("phone"));
 			
-			accountDAO.updateAccount(account);
+			accountBO.updateAccount(account);
 		}
 		
 		
-		listAccounts = accountDAO.getAll();
+		listAccounts = accountBO.getAll();
 		req.setAttribute("listAccounts", listAccounts);	
 		req.getRequestDispatcher("account/listAccounts.jsp").forward(req, resp);	
 	}

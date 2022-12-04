@@ -1,26 +1,22 @@
 package com.java.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GroupTask {
-	private int groupId;
-	private String groupName;
-	private String description;
-	public int getGroupId() {
-		return groupId;
+	private String fullname;
+	private ArrayList<Tasks> listTasks;
+	public String getFullname() {
+		return fullname;
 	}
-	public void setGroupId(int groupId) {
-		this.groupId = groupId;
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
 	}
-	public String getGroupName() {
-		return groupName;
+	public ArrayList<Tasks> getListTasks() {
+		return listTasks;
 	}
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setListTasks(ArrayList<Tasks> listTasks) {
+		this.listTasks = listTasks;
 	}
 	
 	

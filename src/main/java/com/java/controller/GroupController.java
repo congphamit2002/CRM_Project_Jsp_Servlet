@@ -11,15 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.java.bo.GroupBO;
+import com.java.bo.TaskBO;
 import com.java.dao.AccountDAO;
 import com.java.dao.GroupDAO;
 import com.java.model.Account;
-import com.java.model.GroupTask;
+import com.java.model.Group;
 
 @WebServlet("/groupTask")
-public class GroupTaskController extends HttpServlet{
-	private ArrayList<GroupTask> listGroupTask = new ArrayList<GroupTask>();
-	private GroupDAO groupDAO = new GroupDAO();
+public class GroupController extends HttpServlet{
+	private ArrayList<Group> listGroupTask = new ArrayList<Group>();
+	private GroupBO groupBO = new GroupBO();
+	private TaskBO taskBO = new TaskBO();
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// TODO Auto-generated method stub
@@ -33,7 +36,7 @@ public class GroupTaskController extends HttpServlet{
 		System.out.println("action " + action);
 		//update account
 		if(groupId != null && !groupId.equals("") && action.equals("update")) {
-			GroupTask groupTask = groupDAO.getGroupTaskById(Integer.parseInt(groupId));
+			Group groupTask = groupBO.getGroupTaskById(Integer.parseInt(groupId));
 			System.out.println("Name group " + groupTask.getGroupName());
 			String json = gson.toJson(groupTask);
 			resp.setContentType("application/json");
@@ -43,16 +46,17 @@ public class GroupTaskController extends HttpServlet{
 			out.write(json);
 			out.flush();
 			out.close();
-			listGroupTask = groupDAO.getAll();
+			listGroupTask = groupBO.getAll();
 			System.out.println("go to update");
 		}else if(groupId != null && !groupId.equals("") && action.equals("delete")){
 			//delete 
-			groupDAO.deleteGroupTask(Integer.parseInt(groupId));
-			listGroupTask = groupDAO.getAll();
+			taskBO.deleteTaskByGroupId(Integer.parseInt(groupId));
+			groupBO.deleteGroupTask(Integer.parseInt(groupId));
+			listGroupTask = groupBO.getAll();
 			System.out.println("go to delete");
 		}
 		
-		listGroupTask = groupDAO.getAll();
+		listGroupTask = groupBO.getAll();
 		System.out.println("go to page");
 		req.setAttribute("listGroupTask", listGroupTask);	
 		req.getRequestDispatcher("group/listGroupTask.jsp").forward(req, resp);	
@@ -70,23 +74,23 @@ public class GroupTaskController extends HttpServlet{
 		}
 		if(groupId.equals("")) {
 			//insert
-			GroupTask groupTask = new GroupTask();
+			Group groupTask = new Group();
 			groupTask.setGroupName(req.getParameter("groupName"));
 			groupTask.setDescription(req.getParameter("description"));
 			
-			groupDAO.insertGroupTask(groupTask);
+			groupBO.insertGroupTask(groupTask);
 		} else {
 			//update
-			GroupTask groupTask = new GroupTask();
+			Group groupTask = new Group();
 			groupTask.setGroupId(Integer.parseInt(req.getParameter("groupId")));
 			groupTask.setGroupName(req.getParameter("groupName"));
 			groupTask.setDescription(req.getParameter("description"));
 			
-			groupDAO.updateGroupTasks(groupTask);
+			groupBO.updateGroupTasks(groupTask);
 		}
 		
 		
-		listGroupTask = groupDAO.getAll();
+		listGroupTask = groupBO.getAll();
 		req.setAttribute("listGroupTask", listGroupTask);	
 		req.getRequestDispatcher("group/listGroupTask.jsp").forward(req, resp);	
 	}

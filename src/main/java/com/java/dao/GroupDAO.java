@@ -6,18 +6,18 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import com.java.connection.MySQLConnection;
-import com.java.model.GroupTask;
+import com.java.model.Group;
 
 public class GroupDAO {
-	public ArrayList<GroupTask> getAll() {
-		ArrayList<GroupTask> listGroupTask = new ArrayList<GroupTask>();
+	public ArrayList<Group> getAll() {
+		ArrayList<Group> listGroupTask = new ArrayList<Group>();
 		String query = "select * from groups_task";
 		try (Connection con = MySQLConnection.getConnection();
 				PreparedStatement psttm = con.prepareStatement(query);){
 			ResultSet rs = psttm.executeQuery();
 			
 			while(rs.next()) {
-				GroupTask groupTask = new GroupTask();
+				Group groupTask = new Group();
 				groupTask.setGroupId(rs.getInt("group_id"));
 				groupTask.setGroupName(rs.getString("group_name"));
 				groupTask.setDescription(rs.getString("description"));
@@ -33,10 +33,10 @@ public class GroupDAO {
 		return listGroupTask;
 	}
 	
-	public GroupTask getGroupTaskById(int id) {
+	public Group getGroupTaskById(int id) {
 		String query = "select * from groups_task where group_id = ?";
 
-		GroupTask groupTask = new GroupTask();
+		Group groupTask = new Group();
 		try(
 				Connection con = MySQLConnection.getConnection();
 				PreparedStatement psttm = con.prepareStatement(query);) {
@@ -53,7 +53,7 @@ public class GroupDAO {
 		return groupTask;
 	}
 	
-	public int insertGroupTask(GroupTask groupTask) {
+	public int insertGroupTask(Group groupTask) {
 		String query = "insert into groups_task(group_id, group_name, description) values(?,?,?);";
 		try (Connection con = MySQLConnection.getConnection();
 				PreparedStatement psttm = con.prepareStatement(query);){
@@ -69,7 +69,7 @@ public class GroupDAO {
 		return 0;
 	}
 	
-	public int updateGroupTasks(GroupTask groupTask) {
+	public int updateGroupTasks(Group groupTask) {
 		String query = "update groups_task set group_name = ?, description = ? where group_id = ?;";
 		try (Connection con = MySQLConnection.getConnection();
 				PreparedStatement psttm = con.prepareStatement(query);){

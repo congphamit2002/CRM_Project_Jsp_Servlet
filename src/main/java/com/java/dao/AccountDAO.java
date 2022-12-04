@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.java.connection.MySQLConnection;
 import com.java.model.Account;
@@ -59,26 +60,21 @@ public class AccountDAO {
 		return account;
 	}
 	
-	public Account getAccountByGroupId(int id) {
+	public ArrayList<Integer> getAccounIdtByGroupId(int id) {
 		String query = "select distinct account_id from tasks where group_id = ?;";
-		Account account = new Account();
+		ArrayList<Integer> listIds = new ArrayList<Integer>();
 		try(
 				Connection con = MySQLConnection.getConnection();
 				PreparedStatement psttm = con.prepareStatement(query);) {
 			psttm.setInt(1, id);
 			ResultSet rs = psttm.executeQuery();
 			while(rs.next()) {
-				account.setAccountId(rs.getInt("account_id"));
-				account.setFullname(rs.getString("fullname"));
-				account.setAddress(rs.getString("address"));
-				account.setEmail(rs.getString("email"));
-				account.setPassword(rs.getString("password"));
-				account.setPhone(rs.getString("phone"));;
+				listIds.add(rs.getInt("account_id"));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		return account;
+		return listIds;
 	}
 	
 	public int insertAccount(Account account) {
@@ -131,4 +127,28 @@ public class AccountDAO {
 		
 		return 0;
 	}
-}
+	
+	public Account checkLogin(String email, String password) {
+		String query = "select * from accounts where email = ? and password = ?;";
+
+		Account account = new Account();
+		try(
+				Connection con = MySQLConnection.getConnection();
+				PreparedStatement psttm = con.prepareStatement(query);) {
+			psttm.setString(1, email);
+			psttm.setString(2, password);
+			ResultSet rs = psttm.executeQuery();
+			while(rs.next()) {
+				account.setAccountId(rs.getInt("account_id"));
+				account.setFullname(rs.getString("fullname"));
+				account.setAddress(rs.getString("address"));
+				account.setEmail(rs.getString("email"));
+				account.setPassword(rs.getString("password"));
+				account.setPhone(rs.getString("phone"));;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return account;
+	}
+} 

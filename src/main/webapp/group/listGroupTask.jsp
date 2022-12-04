@@ -15,7 +15,7 @@
 					<div class="card">
 						<div class="card-header" style="height: 80px;">
                                 <strong class="card-title add-title">Danh sách nhóm việc</strong>
-                                <button type="button" class="btn btn-secondary mb-1 add-group" id="add-group" data-toggle="modal" data-target="#mediumModal">
+                                <button type="button" class="btn btn-secondary mb-1 btn-add-group" id="btn-add-group" data-toggle="modal" data-target="#mediumModal">
                                     Thêm mới nhóm việc
                                 </button>
                             </div>

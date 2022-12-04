@@ -7,6 +7,7 @@ public class Tasks {
 	private int groupId;
 	private int accountId;
 	private int statusId;
+	private String fullname;
 	public int getTaskId() {
 		return taskId;
 	}
@@ -42,6 +43,12 @@ public class Tasks {
 	}
 	public void setStatusId(int statusId) {
 		this.statusId = statusId;
+	}
+	public String getFullname() {
+		return fullname;
+	}
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
 	}
 	
 	

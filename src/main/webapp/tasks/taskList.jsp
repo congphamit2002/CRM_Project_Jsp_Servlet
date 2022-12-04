@@ -14,9 +14,9 @@
 			<div class="col-lg-12">
 				<div class="card">
 					<div class="card-header card-header-custom">
-						<h4><%= request.getParameter("groupName") %></h4>
+						<h4><%=request.getParameter("groupName")%></h4>
 						<button type="button" class="btn btn-secondary mb-1 btn-add-task"
-							id="add-task" data-toggle="modal" data-target="#mediumModal">
+							id="btn-add-task" data-toggle="modal" data-target="#mediumModal">
 							Thêm mới công việc</button>
 					</div>
 					<div class="card-body">
@@ -25,20 +25,34 @@
 								<div class="nav nav-tabs" id="nav-tab" role="tablist">
 									<a class="nav-item nav-link active" id="nav-home-tab"
 										data-toggle="tab" href="#nav-task-data" role="tab"
-										aria-controls="nav-home" aria-selected="true">Home</a> <a
+										aria-controls="nav-home" aria-selected="true">Thống kê công việc</a> <a
 										class="nav-item nav-link" id="nav-profile-tab"
 										data-toggle="tab" href="#nav-list-task" role="tab"
-										aria-controls="nav-profile" aria-selected="false">Profile</a>
+										aria-controls="nav-profile" aria-selected="false">Danh sách công việc</a>
 								</div>
 							</nav>
 							<div class="tab-content pl-3 pt-2" id="nav-tabContent">
+							<c:forEach items="${listChartItem }" var="element">
+									<c:if test= "${element.getStatusId() == 1 }">
+										<input type="hidden" id="count-unprocess" name="count-unprocess"
+									class="form-control" value="${element.getCountItem() }">
+									</c:if>
+									<c:if test= "${element.getStatusId() == 2 }">
+										<input type="hidden" id="count-processing" name="count-processing"
+									class="form-control" value="${element.getCountItem() }">
+									</c:if>
+									<c:if test= "${element.getStatusId() == 3 }">
+										<input type="hidden" id="count-complete" name="count-complete"
+									class="form-control" value="${element.getCountItem() }">
+									</c:if>
+								</c:forEach>
 								<div class="tab-pane fade show active" id="nav-task-data"
 									role="tabpanel" aria-labelledby="nav-task-data-tab">
 									<div class="row">
 										<div class="col-lg-6">
 											<div class="card">
 												<div class="card-body">
-													<h4 class="mb-3">Pie Chart</h4>
+													<h4 class="mb-3">Biểu đồ tròn</h4>
 													<div class="flot-container">
 														<div id="flot-pie" class="flot-pie-container"></div>
 													</div>
@@ -49,130 +63,110 @@
 										<div class="col-lg-6">
 											<div class="card">
 												<div class="card-body">
-													<h4 class="mb-3">Line Chart</h4>
-													<div class="flot-container">
-														<div id="chart1" style="width: 100%; height: 275px;"></div>
-													</div>
+													<h4 class="mb-3">Biểu đồ cột</h4>
+													<canvas id="singelBarChart"></canvas>
 												</div>
 											</div>
 										</div>
+										<!-- /# column -->
 									</div>
 								</div>
 								<div class="tab-pane fade" id="nav-list-task" role="tabpanel"
 									aria-labelledby="nav-list-task-tab">
-									<div class="row">
-										<h3 style="padding: 16px;">Phạm Thành Công</h3>
-									</div>
-									<div class="row">
-										<div class="col-md-4">
-											<div class="card">
-												<div class="card-header card-unprocess">
-													<i class="fa  fa-gavel"></i> <strong
-														class="card-title mb-3">Chưa thực hiện</strong>
-												</div>
-												<div class="card-body">
-													<div class="container-custom">
-														<p class="taskId">Task 001</p>
-														<div class="row-custom">
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-calendar">16/11/2022</i>
-															</div>
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-user"></i> Phạm Thành Công
-															</div>
-															<div class="clear"></div>
+									<c:forEach items="${listGroupTasks }" var="element">
+										<div>
+											<div class="row">
+												<h3 style="padding: 16px;">${ element.getFullname()}</h3>
+											</div>
+
+											<div class="row">
+												<div class="col-md-4">
+													<div class="card"
+														style="border: 1px solid rgb(56, 147, 229);">
+														<div class="card-header card-unprocess">
+															<i class="fa  fa-gavel"></i> <strong
+																class="card-title mb-3">Chưa thực hiện</strong>
+														</div>
+														<div class="card-body">
+															<c:forEach items="${element.getListTasks() }" var="task">
+																<c:if test="${task.getStatusId() == 1}">
+																	<div class="container-custom"
+																		data-id="${task.getTaskId() }">
+																		<p class="taskId">${task.getTaskName() }</p>
+																		<div class="row-custom">
+																			<div class="col-custom col-half-custom">
+																				<i class="fa fa-calendar">${task.getEndDate() }</i>
+																			</div>
+																			<div class="col-custom col-half-custom">
+																				<i class="fa fa-user"></i> ${task.getFullname() }
+																			</div>
+																			<div class="clear"></div>
+																		</div>
+																	</div>
+																</c:if>
+															</c:forEach>
 														</div>
 													</div>
+												</div>
 
-													<div class="container-custom">
-														<p class="taskId">Task 001</p>
-														<div class="row-custom">
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-calendar">16/11/2022</i>
-															</div>
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-user"></i> Phạm Thành Công
-															</div>
-															<div class="clear"></div>
+												<div class="col-md-4">
+													<div class="card" style="border: 1px solid #02c543;">
+														<div class="card-header card-processing">
+															<i class="ti ti-reload"></i> <strong
+																class="card-title mb-3">Đang thực hiện</strong>
+														</div>
+														<div class="card-body">
+															<c:forEach items="${element.getListTasks() }" var="task">
+																<c:if test="${task.getStatusId() == 2}">
+																	<div class="container-custom"
+																		data-id="${task.getTaskId() }">
+																		<p class="taskId">${task.getTaskName() }</p>
+																		<div class="row-custom">
+																			<div class="col-custom col-half-custom">
+																				<i class="fa fa-calendar">${task.getEndDate() }</i>
+																			</div>
+																			<div class="col-custom col-half-custom">
+																				<i class="fa fa-user"></i> ${task.getFullname() }
+																			</div>
+																			<div class="clear"></div>
+																		</div>
+																	</div>
+																</c:if>
+															</c:forEach>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-4">
+													<div class="card" style="border: 1px solid #df941a;">
+														<div class="card-header card-complete">
+															<i class="fa fa-check-square"></i> <strong
+																class="card-title mb-3">Hoàn thành</strong>
+														</div>
+														<div class="card-body">
+															<c:forEach items="${element.getListTasks() }" var="task">
+																<c:if test="${task.getStatusId() == 3}">
+																	<div class="container-custom"
+																		data-id="${task.getTaskId() }">
+																		<p class="taskId">${task.getTaskName() }</p>
+																		<div class="row-custom">
+																			<div class="col-custom col-half-custom">
+																				<i class="fa fa-calendar">${task.getEndDate() }</i>
+																			</div>
+																			<div class="col-custom col-half-custom">
+																				<i class="fa fa-user"></i> ${task.getFullname() }
+																			</div>
+																			<div class="clear"></div>
+																		</div>
+																	</div>
+																</c:if>
+															</c:forEach>
 														</div>
 													</div>
 												</div>
 											</div>
+											<!-- .row -->
 										</div>
-
-
-										<div class="col-md-4">
-											<div class="card">
-												<div class="card-header card-processing">
-													<i class="ti ti-reload"></i> <strong
-														class="card-title mb-3">Đang thực hiện</strong>
-												</div>
-												<div class="card-body">
-													<div class="container-custom">
-														<p class="taskId">Task 001</p>
-														<div class="row-custom">
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-calendar">16/11/2022</i>
-															</div>
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-user"></i> Phạm Thành Công
-															</div>
-															<div class="clear"></div>
-														</div>
-													</div>
-
-													<div class="container-custom">
-														<p class="taskId">Task 001</p>
-														<div class="row-custom">
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-calendar">16/11/2022</i>
-															</div>
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-user"></i> Phạm Thành Công
-															</div>
-															<div class="clear"></div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-md-4">
-											<div class="card">
-												<div class="card-header card-complete">
-													<i class="fa fa-check-square"></i> <strong
-														class="card-title mb-3">Hoàn thành</strong>
-												</div>
-												<div class="card-body">
-													<div class="container-custom">
-														<p class="taskId">Task 001</p>
-														<div class="row-custom">
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-calendar">16/11/2022</i>
-															</div>
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-user"></i> Phạm Thành Công
-															</div>
-															<div class="clear"></div>
-														</div>
-													</div>
-
-													<div class="container-custom">
-														<p class="taskId">Task 001</p>
-														<div class="row-custom">
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-calendar">16/11/2022</i>
-															</div>
-															<div class="col-custom col-half-custom">
-																<i class="fa fa-user"></i> Phạm Thành Công
-															</div>
-															<div class="clear"></div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<!-- .row -->
+									</c:forEach>
 
 
 								</div>
@@ -199,16 +193,16 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						<form action="<%= request.getContextPath() %>/taskList"
-							method="post" class="" id="formGroup">
+						<form action="<%=request.getContextPath()%>/taskList"
+							method="post" class="" id="formTask">
 							<div class="form-group">
 								<input type="hidden" id="taskId" name="taskId"
 									class="form-control" value=""> <input type="hidden"
 									id="groupId" name="groupId"
-									value="<%= request.getParameter("groupId") %>"
+									value="<%=request.getParameter("groupId")%>"
 									class="form-control"> <input type="hidden"
 									id="groupName" name="groupName"
-									value="<%= request.getParameter("groupName") %>"
+									value="<%=request.getParameter("groupName")%>"
 									class="form-control">
 								<div class="input-group">
 									<div class="input-group-addon">
@@ -275,6 +269,23 @@
 </div>
 <!-- .content -->
 <%@ include file="../layout/footer.jsp"%>
+
+
+<!--Flot Chart-->
+<script
+	src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/flot-spline@0.0.1/js/jquery.flot.spline.min.js"></script>
+
+<script
+	src="https://cdn.jsdelivr.net/npm/flot.curvedlines@1.1.1/curvedLines.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.pie.min.js"></script>
+
 <script type="text/javascript" src="./assets/js/task.js"></script>
+<script type="text/javascript" src="./assets/js/custom-chart.js"></script>
+
 </body>
 </html>

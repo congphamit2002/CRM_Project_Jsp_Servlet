@@ -48,7 +48,7 @@ jQuery(document).ready(function($) {
 	
 	$("#btn-add-group").on('click', function(e) {
 		
-		//$('#formGroup').trigger("reset");
+		$('#formGroup').trigger("reset");
 		$("#groupId").val("");
 			$("#groupName").val("");
 			$("#description").val("");
